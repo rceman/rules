@@ -1,7 +1,7 @@
 # 🤖 Local AI / LLM Rule‑Set
 
 This file is an **index**.  
-If your project needs local inference (no external APIs), follow these additional docs located in `rules/python/local-llm/`:
+If your project needs local inference (no external APIs), follow these additional docs located in `./python/ai/`:
 
 | File  | Topic                               |
 |-------|-------------------------------------|
