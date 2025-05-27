@@ -14,19 +14,28 @@ Use **Make** to unify common tasks.
 ```makefile
 PYTHON ?= python3
 VENV   ?= .venv
-PIP    := $(VENV)/bin/pip
-RUNPY  := $(VENV)/bin/python
-RUFF   := $(VENV)/bin/ruff
+
+# Detect OS: Scripts/ on Windows, bin/ on Unix
+ifeq ($(OS),Windows_NT)
+  PIP   := $(VENV)/Scripts/pip.exe
+  RUNPY := $(VENV)/Scripts/python.exe
+  RUFF  := $(VENV)/Scripts/ruff.exe
+else
+  PIP   := $(VENV)/bin/pip
+  RUNPY := $(VENV)/bin/python
+  RUFF  := $(VENV)/bin/ruff
+endif
 
 .PHONY: setup run lint format test clean help
+
+setup: $(VENV)/bin/activate
 
 $(VENV)/bin/activate: pyproject.toml
 	$(PYTHON) -m venv $(VENV)
 	$(PIP) install --upgrade pip
 	$(PIP) install -r requirements.txt
+	$(PIP) freeze > requirements.txt
 	touch $@
-
-setup: $(VENV)/bin/activate
 
 run: setup
 	$(RUNPY) -m package_name
