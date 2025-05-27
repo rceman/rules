@@ -15,27 +15,29 @@ Use **Make** to unify common tasks.
 PYTHON ?= python3
 VENV   ?= .venv
 
-# Detect OS: Scripts/ on Windows, bin/ on Unix
+# ── Platform detection ───────────────────
 ifeq ($(OS),Windows_NT)
-  PIP   := $(VENV)/Scripts/pip.exe
-  RUNPY := $(VENV)/Scripts/python.exe
-  RUFF  := $(VENV)/Scripts/ruff.exe
+  PYTHON   := python
+  RUNPY    := $(VENV)/Scripts/python.exe
+  ACTIVATE := $(VENV)/Scripts/activate.bat
+  RUFF     := $(VENV)/Scripts/ruff.exe
 else
-  PIP   := $(VENV)/bin/pip
-  RUNPY := $(VENV)/bin/python
-  RUFF  := $(VENV)/bin/ruff
+  RUNPY    := $(VENV)/bin/python
+  ACTIVATE := $(VENV)/bin/activate
+  RUFF     := $(VENV)/bin/ruff
 endif
+
+# Always invoke pip as “python -m pip”
+PIP := $(RUNPY) -m pip
 
 .PHONY: setup run lint format test clean help
 
-setup: $(VENV)/bin/activate
+setup: $(ACTIVATE)
 
-$(VENV)/bin/activate: pyproject.toml
+$(ACTIVATE):
 	$(PYTHON) -m venv $(VENV)
-	$(PIP) install --upgrade pip
-	$(PIP) install -r requirements.txt
-	$(PIP) freeze > requirements.txt
-	touch $@
+	$(RUNPY) -m pip install --upgrade pip
+	$(RUNPY) -m pip install -r requirements.txt
 
 run: setup
 	$(RUNPY) -m package_name
